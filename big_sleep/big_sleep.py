@@ -31,7 +31,7 @@ def signal_handling(signum,frame):
     global terminate
     terminate = True
 
-signal.signal(signal.SIGINT,signal_handling)
+# signal.signal(signal.SIGINT,signal_handling)
 
 # helpers
 
