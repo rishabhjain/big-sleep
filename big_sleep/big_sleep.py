@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 from torch.optim import Adam
+from imageio import imread, mimsave
 
 from torchvision.utils import save_image
 
@@ -267,7 +268,8 @@ class Imagine(nn.Module):
         save_date_time = False,
         save_best = False,
         experimental_resample = False,
-        ema_decay = 0.99
+        ema_decay = 0.99,
+        save_video = False
     ):
         super().__init__()
 
@@ -317,6 +319,8 @@ class Imagine(nn.Module):
         }
         self.set_text(text, text_min)
 
+        self.save_video = save_video
+
     def encode_one_phrase(self, phrase):
         return perceptor.encode_text(tokenize(f'''{phrase}''').cuda()).detach().clone()
     
@@ -329,6 +333,15 @@ class Imagine(nn.Module):
     def encode_max_and_min(self, text, text_min=""):
         self.encode_multiple_phrases(text)
         self.encode_multiple_phrases(text_min, "min")
+
+    def generate_video(self):
+        images = []
+        for file_name in sorted(os.listdir('./')):
+            if file_name.startswith(self.textpath) and file_name != f'{self.textpath}.png':
+                images.append(imread(os.path.join('./', file_name)))
+
+        mimsave(f'{self.textpath}.gif', images)
+        print(f'Generated image generation animation at ./{self.textpath}.gif')
 
     def set_text(self, text, text_min=""):
         self.text = text
@@ -410,3 +423,6 @@ class Imagine(nn.Module):
                 if terminate:
                     print('detecting keyboard interrupt, gracefully exiting')
                     return
+
+        if self.save_video and self.save_progress:
+            self.generate_video()

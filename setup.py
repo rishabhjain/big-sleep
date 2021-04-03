@@ -34,7 +34,8 @@ setup(
     'pytorch-pretrained-biggan',
     'regex',
     'torchvision>=0.8.2',
-    'tqdm'
+    'tqdm',
+    'imageio>=2.9.0'
   ],
   classifiers=[
     'Development Status :: 4 - Beta',
