@@ -22,7 +22,7 @@ from big_sleep.resample import resample
 from big_sleep.biggan import BigGAN
 from big_sleep.clip import load, tokenize
 
-assert torch.cuda.is_available(), 'CUDA must be available in order to use Deep Daze'
+# assert torch.cuda.is_available(), 'CUDA must be available in order to use Deep Daze'
 
 # graceful keyboard interrupt
 
@@ -296,7 +296,7 @@ class Imagine(nn.Module):
             ema_decay
             = ema_decay
 
-        ).cuda()
+        )
 
         self.model = model
 
@@ -322,8 +322,8 @@ class Imagine(nn.Module):
         self.save_video = save_video
 
     def encode_one_phrase(self, phrase):
-        return perceptor.encode_text(tokenize(f'''{phrase}''').cuda()).detach().clone()
-    
+        return perceptor.encode_text(tokenize(f'''{phrase}''')).detach().clone()
+
     def encode_multiple_phrases(self, text, text_type="max"):
         if len(text) > 0 and "\\" in text:
             self.encoded_texts[text_type] = [self.encode_one_phrase(prompt_min) for prompt_min in text.split("\\")]
@@ -360,7 +360,7 @@ class Imagine(nn.Module):
 
     def reset(self):
         self.model.reset()
-        self.model = self.model.cuda()
+        self.model = self.model
         self.optimizer = Adam(self.model.model.latents.parameters(), self.lr)
 
     def train_step(self, epoch, i, pbar=None):
